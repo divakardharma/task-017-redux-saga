@@ -1,38 +1,225 @@
-.App {
-  text-align: center;
+:root {
+  --bg: #faf9f6;
+  --surface: #ffffff;
+  --ink: #1f2a28;
+  --muted: #6b7770;
+  --accent: #2f6f62;
+  --accent-soft: #e6efec;
+  --danger: #b3493f;
+  --danger-soft: #f7e9e7;
+  --warn: #b3823f;
+  --border: #e2e6e3;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.app {
+  max-width: 920px;
+  margin: 40px auto;
+  padding: 0 20px 60px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app > h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+
+.network {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.network.online {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.network.offline {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.queue-banner {
+  background: #fdf6e8;
+  border: 1px solid #f0dfae;
+  color: var(--warn);
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.queue-banner strong { color: var(--ink); }
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 720px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+}
+
+.section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.section h2 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+/* Patient list */
+.patient-row {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.patient-row:hover { background: var(--accent-soft); }
+.patient-row:last-of-type { border-bottom: none; }
+
+.patient-row strong { font-size: 0.92rem; }
+.patient-row span { font-size: 0.8rem; color: var(--muted); }
+
+.pagination {
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 14px;
+  margin-top: 14px;
 }
 
-.App-link {
-  color: #61dafb;
+.pagination button {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
+
+.pagination button:not(:disabled):hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.pagination span { font-size: 0.85rem; color: var(--muted); }
+
+.error {
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
+/* Patient details */
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.detail-row:last-child { border-bottom: none; }
+.detail-row span:first-child { color: var(--muted); }
+
+.placeholder {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+form label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: -6px;
+}
+
+form input {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+form input:focus { border-color: var(--accent); }
+
+form button {
+  align-self: flex-start;
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+form button:hover { background: #275c51; }
+
+.error-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.retry-btn {
+  padding: 5px 12px;
+  border: 1px solid var(--danger);
+  background: var(--danger-soft);
+  color: var(--danger);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.retry-btn:hover { background: #f3d9d5; }

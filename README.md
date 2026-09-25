@@ -23,3 +23,27 @@ automatically cancels any in-flight `fetchPatientDetailsSaga` task
 when a new patient is selected. The saga's `finally` block checks
 `cancelled()` and aborts the underlying `fetch` via `AbortController`,
 ensuring only the most recently requested patient's data is applied.
+
+
+
+
+                🏥 HEALTHCARE DASHBOARD
+                         |
+          ┌──────────────┼──────────────┐
+          ↓              ↓              ↓
+    Patient List     Registration    Patient Details
+          |              |              |
+          ↓              ↓              ↓
+       Redux          Redux          Redux
+          |              |              |
+          └──────────────┼──────────────┘
+                         ↓
+                  Redux-Saga
+                         |
+              ┌──────────┼──────────┐
+              ↓          ↓          ↓
+          API Fetch    Offline    Cancel
+          10 Patients   Queue     Requests
+              |          |          |
+              ↓          ↓          ↓
+           Store       Store      Latest only

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import {
-  FETCH_PATIENTS,
+import { FETCH_PATIENTS,
   FETCH_PATIENT_DETAILS,
 } from "../redux/actions";
 
@@ -27,7 +26,7 @@ function PatientList() {
     dispatch({
       type: FETCH_PATIENTS,
     });
-  }, [dispatch]);
+  }, []);
 
   const patientsPerPage = 5;
 

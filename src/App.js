@@ -11,7 +11,9 @@ import "./App.css";
 
 function App() {
   const dispatch = useDispatch();
-  const isOnline = useSelector((state) => state.patient.isOnline);
+
+  const isOnline = useSelector((state) => state.patient.isOnline );
+
   const offlineQueue = useSelector((state) => state.patient.offlineQueue);
 
   useEffect(() => {
@@ -25,30 +27,64 @@ function App() {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
-  }, [dispatch]);
+  }, []);
 
   return (
-    <div className="app">
-      <h1>Healthcare Doctor Dashboard</h1>
+    <div className="app-shell">
+      <header className="topbar">
+        <div className="brand">
+          <div className="brand-mark">+</div>
 
-      <div className={isOnline ? "network online" : "network offline"}>
-        {isOnline ? "🟢 Online" : "🔴 Offline"}
-      </div>
-
-      {offlineQueue.length > 0 && (
-        <div className="queue-banner">
-          <strong>{offlineQueue.length}</strong> patient form
-          {offlineQueue.length > 1 ? "s" : ""} waiting to sync once you're back online.
+          <div>
+            <h1>CareFlow</h1>
+            <p>Doctor Workspace</p>
+          </div>
         </div>
-      )}
 
-      <div className="dashboard-grid">
-        <div>
+        <div className="header-right">
+          {offlineQueue.length > 0 && (
+            <div className="sync-status">
+              <span className="sync-count">
+                {offlineQueue.length}
+              </span>
+              waiting to sync
+            </div>
+          )}
+
+          <div
+            className={ isOnline
+                ? "network-status online"
+                : "network-status offline"
+            }
+          >
+            <span className="status-dot"></span>
+            {isOnline ? "Online" : "Offline"}
+          </div>
+
+          <div className="doctor-profile">
+            <div className="avatar">DR</div>
+
+            <div>
+              <strong>Doctor</strong>
+              <span>Dashboard</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="dashboard">
+        <section className="patients-panel">
           <PatientList />
+        </section>
+
+        <section className="details-panel">
+          <PatientDetails />
+        </section>
+
+        <section className="form-panel">
           <PatientForm />
-        </div>
-        <PatientDetails />
-      </div>
+        </section>
+      </main>
     </div>
   );
 }

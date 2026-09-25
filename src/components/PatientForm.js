@@ -35,55 +35,87 @@ function PatientForm() {
   };
 
   return (
-    <div className="section">
-      <h2>Patient Registration</h2>
+    <div className="panel-content form-content">
+      <div className="panel-header">
+        <div>
+          <span className="eyebrow">QUICK ACTION</span>
+          <h2>Register Patient</h2>
+        </div>
 
-      <form onSubmit={handleSubmit}>
-        <label>Patient Name</label>
+        <div className="add-icon">+</div>
+      </div>
 
-        <input
-          type="text"
-          value={name}
-          onChange={(e) =>
-            setName(e.target.value)
-          }
-          required
-        />
+      <p className="form-description">
+        Add a new patient to today's care workflow.
+      </p>
 
-        <label>Age</label>
+      <form
+        className="patient-form"
+        onSubmit={handleSubmit}
+      >
+        <div className="form-group full-field">
+          <label>Patient Name</label>
 
-        <input
-          type="number"
-          value={age}
-          onChange={(e) =>
-            setAge(e.target.value)
-          }
-          required
-        />
+          <input
+            type="text"
+            placeholder="Enter full name"
+            value={name}
+            onChange={(e) =>
+              setName(e.target.value)
+            }
+            required
+          />
+        </div>
 
-        <label>Disease</label>
+        <div className="form-row">
+          <div className="form-group">
+            <label>Age</label>
 
-        <input
-          type="text"
-          value={disease}
-          onChange={(e) =>
-            setDisease(e.target.value)
-          }
-          required
-        />
+            <input
+              type="number"
+              placeholder="Age"
+              value={age}
+              onChange={(e) =>
+                setAge(e.target.value)
+              }
+              required
+            />
+          </div>
 
-        <label>Doctor Assigned</label>
+          <div className="form-group">
+            <label>Disease</label>
 
-        <input
-          type="text"
-          value={doctor}
-          onChange={(e) =>
-            setDoctor(e.target.value)
-          }
-          required
-        />
+            <input
+              type="text"
+              placeholder="Condition"
+              value={disease}
+              onChange={(e) =>
+                setDisease(e.target.value)
+              }
+              required
+            />
+          </div>
+        </div>
 
-        <button type="submit">
+        <div className="form-group full-field">
+          <label>Doctor Assigned</label>
+
+          <input
+            type="text"
+            placeholder="Doctor name"
+            value={doctor}
+            onChange={(e) =>
+              setDoctor(e.target.value)
+            }
+            required
+          />
+        </div>
+
+        <button
+          className="register-btn"
+          type="submit"
+        >
+          <span>+</span>
           Register Patient
         </button>
       </form>

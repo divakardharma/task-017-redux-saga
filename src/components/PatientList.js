@@ -12,9 +12,9 @@ function PatientList() {
     (state) => state.patient.patients
   );
 
-  const loading = useSelector(
-    (state) => state.patient.loading
-  );
+ const loading = useSelector(
+  (state) => state.patient.patientsLoading
+);
 
   const error = useSelector(
     (state) => state.patient.error
@@ -26,7 +26,7 @@ function PatientList() {
     dispatch({
       type: FETCH_PATIENTS,
     });
-  }, []);
+  }, [dispatch]);
 
   const patientsPerPage = 5;
 

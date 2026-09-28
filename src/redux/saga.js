@@ -4,7 +4,6 @@ import {
   takeEvery,
   takeLatest,
   select,
-  fork,
   cancelled,
   delay,
 } from "redux-saga/effects";
@@ -16,7 +15,8 @@ import {
   QUEUE_PATIENT_FORM,
   FETCH_PATIENT_DETAILS,
   SET_PATIENT_DETAILS,
-  SET_LOADING,
+  SET_PATIENTS_LOADING,
+  SET_DETAILS_LOADING, 
   SET_ERROR,
   NETWORK_ONLINE,
   NETWORK_OFFLINE,
@@ -44,7 +44,10 @@ function* fetchPatientsAPI() {
 
 
 function* fetchPatientsSaga() {
-  yield put({ type: SET_LOADING, payload: true });
+  yield put({
+  type: SET_PATIENTS_LOADING,
+  payload: true,
+});
 
   const maxAttempts = 3;
   let attempt = 0;
@@ -100,7 +103,9 @@ function* savePatientAPI(patientData) {
 
 function* submitPatientFormSaga(action) {
   try {
-    const isOnline = navigator.onLine;
+    const isOnline = yield select(
+      (state) => state.patient.isOnline
+    );
 
     if (!isOnline) {
       yield put({
@@ -177,9 +182,9 @@ function* fetchPatientDetailsSaga(action) {
 
   try {
     yield put({
-      type: SET_LOADING,
-      payload: true,
-    });
+  type: SET_DETAILS_LOADING,
+  payload: true,
+});
 
     const response = yield call(
       fetch,

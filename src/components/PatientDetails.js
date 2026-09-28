@@ -5,9 +5,9 @@ function PatientDetails() {
     (state) => state.patient.selectedPatient
   );
 
-  const loading = useSelector(
-    (state) => state.patient.loading
-  );
+ const loading = useSelector(
+  (state) => state.patient.detailsLoading
+);
 
   return (
     <div className="panel-content details-content">

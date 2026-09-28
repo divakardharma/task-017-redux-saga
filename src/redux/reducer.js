@@ -1,8 +1,9 @@
 import {
   SET_PATIENTS,
   QUEUE_PATIENT_FORM,
-  SET_PATIENT_DETAILS,
-  SET_LOADING,
+  SET_PATIENT_DETAILS,  
+  SET_PATIENTS_LOADING,
+  SET_DETAILS_LOADING,
   SET_ERROR,
   NETWORK_ONLINE,
   NETWORK_OFFLINE,
@@ -12,7 +13,8 @@ const initialState = {
   patients: [],
   offlineQueue: [],
   selectedPatient: null,
-  loading: false,
+  patientsLoading: false,
+  detailsLoading: false,
   error: null,
   isOnline: navigator.onLine,
 };
@@ -23,7 +25,7 @@ function patientReducer(state = initialState, action) {
       return {
         ...state,
         patients: action.payload,
-        loading: false,
+        patientsLoading: false,
         error: null,
       };
 
@@ -48,15 +50,21 @@ function patientReducer(state = initialState, action) {
       return {
         ...state,
         selectedPatient: action.payload,
-        loading: false,
+        detailsLoading: false,
         error: null,
       };
 
-    case SET_LOADING:
+    case SET_PATIENTS_LOADING:
       return {
-        ...state,
-        loading: action.payload,
-      };
+      ...state,
+      patientsLoading: action.payload,
+     };
+
+    case SET_DETAILS_LOADING:
+      return {
+      ...state,
+      detailsLoading: action.payload,
+     };
 
     case SET_ERROR:
       return {

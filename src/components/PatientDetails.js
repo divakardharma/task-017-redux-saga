@@ -43,18 +43,17 @@ function PatientDetails() {
         <div className="patient-details">
           <div className="profile-summary">
             <div className="large-avatar">
-              {patient.name
-                ?.split(" ")
-                .map((word) => word[0])
-                .slice(0, 2)
-                .join("")}
+          {patient.firstName?.[0]}
+           {patient.lastName?.[0]}
             </div>
 
             <div>
               <span className="patient-id">
                 PATIENT #{patient.id}
               </span>
-              <h3>{patient.name}</h3>
+              <h3>
+              {patient.firstName} {patient.lastName}
+                 </h3>
               <p>{patient.email}</p>
             </div>
           </div>
@@ -72,11 +71,11 @@ function PatientDetails() {
               </strong>
             </div>
 
-            <div className="detail-item">
-              <span>Website</span>
-              <strong>
-                {patient.website || "—"}
-              </strong>
+           <div className="detail-item">
+           <span>Age</span>
+          <strong>
+             {patient.age || "—"}
+             </strong>
             </div>
 
             <div className="detail-item">

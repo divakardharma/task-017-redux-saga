@@ -83,7 +83,9 @@ function PatientList() {
           key={patient.id}
           onClick={() => handlePatientClick(patient.id)}
         >
-          <strong>{patient.name}</strong>
+          <strong>
+  {patient.firstName} {patient.lastName}
+</strong>
           <span>{patient.email}</span>
         </div>
       ))}

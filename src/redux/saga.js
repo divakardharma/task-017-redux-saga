@@ -4,6 +4,7 @@ import {
   takeEvery,
   takeLatest,
   select,
+  delay,
   cancelled,
 } from "redux-saga/effects";
 
@@ -30,10 +31,10 @@ import {
 // FEATURE 1 - FETCH 10 PATIENTS
 // ======================================================
 
-function* fetchPatientsAPI() {
+function* fetchPatientsAPI(skip = 0) {
   const response = yield call(
     fetch,
-    "https://jsonplaceholder.typicode.com/users"
+    `https://dummyjson.com/users?limit=10&skip=${skip}`
   );
 
   if (!response.ok) {
@@ -42,32 +43,44 @@ function* fetchPatientsAPI() {
 
   const data = yield call([response, response.json]);
 
-  return data.slice(0, 10);
+  return data.users;
 }
 
 
 function* fetchPatientsSaga(action) {
-  try {
-    yield put({
-      type: SET_PATIENTS_LOADING,
-      payload: true,
-    });
+  yield put({
+    type: SET_PATIENTS_LOADING,
+    payload: true,
+  });
 
-    const patients = yield call(
-      fetchPatientsAPI,
-      action.payload || 0
-    );
+  const maxAttempts = 3;
+  let attempt = 0;
 
-    yield put({
-      type: SET_PATIENTS,
-      payload: patients,
-    });
+  while (attempt < maxAttempts) {
+    try {
+      const patients = yield call(
+        fetchPatientsAPI,
+        action.payload || 0
+      );
 
-  } catch (error) {
-    yield put({
-      type: SET_ERROR,
-      payload: error.message,
-    });
+      yield put({
+        type: SET_PATIENTS,
+        payload: patients,
+      });
+
+      return;
+    } catch (error) {
+      attempt++;
+
+      if (attempt >= maxAttempts) {
+        yield put({
+          type: SET_ERROR,
+          payload: `Failed to load patients after ${maxAttempts} attempts.`,
+        });
+      } else {
+        yield delay(1000 * attempt);
+      }
+    }
   }
 }
 
@@ -210,7 +223,7 @@ function* fetchPatientDetailsSaga(action) {
 
     const response = yield call(
       fetch,
-      `https://jsonplaceholder.typicode.com/users/${action.payload}`,
+      `https://dummyjson.com/users/${action.payload}`,
       {
         signal: controller.signal,
       }

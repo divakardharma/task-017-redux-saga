@@ -28,6 +28,19 @@ function PatientList() {
     });
   }, [dispatch]);
 
+  useEffect(() => {
+  if (
+    page % 2 === 0 &&
+    page < 10 &&
+    patients.length === page * 5
+  ) {
+    dispatch({
+      type: FETCH_PATIENTS,
+      payload: patients.length,
+    });
+  }
+}, [page, patients.length, dispatch]);
+
   const patientsPerPage = 5;
 
   const startIndex =
@@ -49,7 +62,9 @@ function PatientList() {
     <div className="section">
       <h2>Patient List</h2>
 
-      {loading && <p>Loading...</p>}
+      {loading && patients.length === 0 && (
+  <p>Loading patients...</p>
+)}
 
             {error && (
         <div className="error-box">

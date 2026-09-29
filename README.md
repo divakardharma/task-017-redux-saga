@@ -27,7 +27,7 @@ ensuring only the most recently requested patient's data is applied.
 
 
 
-                🏥 HEALTHCARE DASHBOARD
+               HEALTHCARE DASHBOARD
                          |
           ┌──────────────┼──────────────┐
           ↓              ↓              ↓

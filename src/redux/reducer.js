@@ -4,6 +4,7 @@ import {
   SET_PATIENT_DETAILS,  
   SET_PATIENTS_LOADING,
   SET_DETAILS_LOADING,
+  RESTORE_OFFLINE_QUEUE,
   SET_ERROR,
   NETWORK_ONLINE,
   NETWORK_OFFLINE,
@@ -21,13 +22,15 @@ const initialState = {
 
 function patientReducer(state = initialState, action) {
   switch (action.type) {
-    case SET_PATIENTS:
-      return {
-        ...state,
-        patients: action.payload,
-        patientsLoading: false,
-        error: null,
-      };
+case SET_PATIENTS:
+  return {
+    ...state,
+    patients: [
+      ...state.patients,
+      ...action.payload,
+    ],
+    patientsLoading: false,
+  };
 
     case QUEUE_PATIENT_FORM:
       return {
@@ -45,6 +48,12 @@ function patientReducer(state = initialState, action) {
           (_, index) => index !== action.payload
         ),
       };
+    
+    case RESTORE_OFFLINE_QUEUE:
+  return {
+    ...state,
+    offlineQueue: action.payload,
+  };
 
     case SET_PATIENT_DETAILS:
       return {

@@ -4,8 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import PatientList from "./components/PatientList";
 import PatientForm from "./components/PatientForm";
 import PatientDetails from "./components/PatientDetails";
+import { getOfflinePatients } from "./indexedDB";
 
-import { NETWORK_ONLINE, NETWORK_OFFLINE } from "./redux/actions";
+import {
+  NETWORK_ONLINE,
+  NETWORK_OFFLINE,
+  RESTORE_OFFLINE_QUEUE,
+} from "./redux/actions";
 
 import "./App.css";
 
@@ -15,6 +20,8 @@ function App() {
   const isOnline = useSelector((state) => state.patient.isOnline );
 
   const offlineQueue = useSelector((state) => state.patient.offlineQueue);
+
+  // console.log("Redux offlineQueue:", offlineQueue);
 
   useEffect(() => {
     const handleOnline = () => dispatch({ type: NETWORK_ONLINE });
@@ -28,6 +35,26 @@ function App() {
       window.removeEventListener("offline", handleOffline);
     };
   }, []);
+
+useEffect(() => {
+  const loadOfflinePatients = async () => {
+    const patients = await getOfflinePatients();
+
+    dispatch({
+      type: RESTORE_OFFLINE_QUEUE,
+      payload: patients,
+    });
+
+   
+    if (navigator.onLine && patients.length > 0) {
+      dispatch({
+        type: NETWORK_ONLINE,
+      });
+    }
+  };
+
+  loadOfflinePatients();
+}, [dispatch]);
 
   return (
     <div className="app-shell">

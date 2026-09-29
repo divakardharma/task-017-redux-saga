@@ -5,7 +5,6 @@ import {
   takeLatest,
   select,
   cancelled,
-  delay,
 } from "redux-saga/effects";
 
 import {
@@ -22,6 +21,10 @@ import {
   NETWORK_OFFLINE,
 } from "./actions";
 
+import {
+  saveOfflinePatient,
+  deleteOfflinePatient,
+} from "../indexedDB";
 
 // ======================================================
 // FEATURE 1 - FETCH 10 PATIENTS
@@ -43,36 +46,30 @@ function* fetchPatientsAPI() {
 }
 
 
-function* fetchPatientsSaga() {
-  yield put({
-  type: SET_PATIENTS_LOADING,
-  payload: true,
-});
+function* fetchPatientsSaga(action) {
+  try {
+    yield put({
+      type: SET_PATIENTS_LOADING,
+      payload: true,
+    });
 
-  const maxAttempts = 3;
-  let attempt = 0;
+    const patients = yield call(
+      fetchPatientsAPI,
+      action.payload || 0
+    );
 
-  while (attempt < maxAttempts) {
-    try {
-      const patients = yield call(fetchPatientsAPI);
-      yield put({ type: SET_PATIENTS, payload: patients });
-      return;
-    } catch (error) {
-      attempt++;
+    yield put({
+      type: SET_PATIENTS,
+      payload: patients,
+    });
 
-      if (attempt >= maxAttempts) {
-        yield put({
-          type: SET_ERROR,
-          payload: `Failed to load patients after ${maxAttempts} attempts.`,
-        });
-      } else {
-        // wait before retrying: 1s, then 2s
-        yield delay(1000 * attempt);
-      }
-    }
+  } catch (error) {
+    yield put({
+      type: SET_ERROR,
+      payload: error.message,
+    });
   }
 }
-
 
 // ======================================================
 // FEATURE 2 - PATIENT FORM API
@@ -100,17 +97,24 @@ function* savePatientAPI(patientData) {
   return data;
 }
 
-
 function* submitPatientFormSaga(action) {
   try {
-    const isOnline = yield select(
-      (state) => state.patient.isOnline
-    );
+    const isOnline = navigator.onLine;
 
     if (!isOnline) {
+      
+      const offlineId = yield call(
+        saveOfflinePatient,
+        action.payload
+      );
+
+      
       yield put({
         type: QUEUE_PATIENT_FORM,
-        payload: action.payload,
+        payload: {
+          ...action.payload,
+          offlineId,
+        },
       });
 
       return;
@@ -122,11 +126,21 @@ function* submitPatientFormSaga(action) {
     );
 
     console.log("Patient saved:", savedPatient);
+
   } catch (error) {
-    // If API fails, put the form into offline queue
+    
+    const offlineId = yield call(
+      saveOfflinePatient,
+      action.payload
+    );
+
+    
     yield put({
       type: QUEUE_PATIENT_FORM,
-      payload: action.payload,
+      payload: {
+        ...action.payload,
+        offlineId,
+      },
     });
 
     console.log(
@@ -135,14 +149,12 @@ function* submitPatientFormSaga(action) {
   }
 }
 
-
 // ======================================================
 // FEATURE 2 - SEND OFFLINE QUEUE
 // ======================================================
 
 const getOfflineQueue = (state) =>
   state.patient.offlineQueue;
-
 
 function* sendOfflineQueueSaga() {
   const queue = yield select(getOfflineQueue);
@@ -153,6 +165,15 @@ function* sendOfflineQueueSaga() {
     try {
       yield call(savePatientAPI, patientData);
 
+      // IndexedDB data's delete
+      if (patientData.offlineId) {
+        yield call(
+          deleteOfflinePatient,
+          patientData.offlineId
+        );
+      }
+
+      // Redux queue data's delete
       yield put({
         type: "REMOVE_QUEUED_PATIENT",
         payload: 0,
@@ -162,6 +183,7 @@ function* sendOfflineQueueSaga() {
         "Queued patient sent successfully:",
         patientData
       );
+
     } catch (error) {
       console.log(
         "Queue sending failed. Will try again later."
